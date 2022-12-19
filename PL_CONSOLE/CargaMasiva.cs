@@ -1,4 +1,5 @@
-﻿string ubicacionArchivo = "C:\\Users\\digis\\OneDrive\\Documents\\Aldair Santiago Garcia\\ExamenAarco\\PL_CONSOLE\\ArchivoTXT\\ListaDeAutos.txt";
+//Solo se debe de actualizar la ubicacion del archivo
+string ubicacionArchivo = "C:\\Users\\digis\\OneDrive\\Documents\\Aldair Santiago Garcia\\ExamenAarco\\PL_CONSOLE\\ArchivoTXT\\ListaDeAutos.txt";
 
 System.IO.StreamReader archivo = new System.IO.StreamReader(ubicacionArchivo);
 int bandera = 0,contador=0;
