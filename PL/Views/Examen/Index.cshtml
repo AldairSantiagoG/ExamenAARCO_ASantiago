@@ -1,30 +1,42 @@
 ﻿@{
+
     ViewData["Title"] = "Index";
 }
 
 
-
-
-<h1>Index</h1>
 <div class="container">
-    <div class="row">
+    <div class="row text-center">
         <h2>Vehículo</h2>
+    </div>
+    <div>
         <br />
-        <select id="slctMarca">
-            
-        </select>
-        <br />
-        <select id="slctSubMarca">
-            
-        </select>
-        <br />
-        <select id="slctModelo">
-            
-        </select>
-        <br />
-        <select id="slctDescripcion">
-            
-        </select>
+        <label class="align-content-lg-start">Marca</label>
+        <div class="row text-center">
+            <select id="slctMarca">
+                
+            </select>
+        </div>
+
+        <label>SubMarca</label>
+        <div class="row text-center">
+            <select id="slctSubMarca">
+                
+            </select>
+        </div>
+
+        <label>Modelo</label>
+        <div class="row text-center">
+            <select id="slctModelo">
+                
+            </select>
+        </div>
+
+        <label>Descripción</label>
+        <div class="row text-center">
+            <select id="slctDescripcion">
+               
+            </select>
+        </div>
         <br />
 
     </div>
@@ -35,17 +47,16 @@
         <h2>Domicilio</h2>
     </div>
     <div class="row">
-        <input type="text" id="txtCp" value="02410" />
+        <input type="text" id="txtCp" value="" />
+        <label id="lblCp" hidden="true"></label>
         <br />
         <input type="text" id="txtEstado" value="" disabled />
         <br />
         <input type="text" id="txtMunicipio" value="" disabled />
         <br />
         <select id="slctColinia">
-            
         </select>
         <br />
-
 
         <button id="btnConsultar">Consultar</button>
     </div>
@@ -60,12 +71,15 @@
         var modelo = false;
         var descripcion = false;
 
-                 
-        
+
+
          //cambioOptionSubMarca
         $("#slctMarca").change(function () {
-            $("#slctSubMarca").empty();//vaciar
-            $.ajax({
+            $("#slctSubMarca ").empty("option");//vaciar
+
+            if($('#slctMarca').val()!=undefined &&$('#slctMarca').val()>0 )
+            {
+                $.ajax({
                 type: 'GET',
                 url: 'http://localhost:5028/GetSubMarcas/',
                 dataType: 'json',
@@ -82,12 +96,18 @@
                     alert('Failed.' + ex);
                 }
             });
+            }
+            else{
+                $("#slctSubMarca").append('<option value="0">' + 'Selecciona una submarca' + '</option>');
+            }
+           
         });
 
         //cambioOptionModelo
         $("#slctSubMarca").change(function () {
-            $("#slctModelo").empty();//vaciar
-            $.ajax({
+            $("#slctModelo ").empty("option");//vaciar
+            if($('#slctSubMarca').val()!=undefined&&$('#slctSubMarca').val()>0){
+                 $.ajax({
                 type: 'GET',
                 url: 'http://localhost:5028/GetModelo/',
                 dataType: 'json',
@@ -106,30 +126,41 @@
                     alert('Failed.' + ex);
                 }
             });
+            }
+            else{
+                $("#slctModelo").append('<option value="0">' + 'Selecciona un modelo' + '</option>');
+            }
+            
+           
         });
-       
+
         //cambioOptionDescripcion
         $("#slctModelo").change(function () {
-            $("#slctColinia").empty();//vaciar
-            $.ajax({
-                type: 'POST',
+            $("#slctDescripcion ").empty("option");//vaciar
+            if($('#slctSubMarca').val()!= undefined && $('#slctSubMarca').val()>0){
+                 $.ajax({
+                type: 'GET',
                 url: 'http://localhost:5028/GetDescripcion/',
                 dataType: 'json',
-                data: { IdSubMarca: $('#slctSubMarca').val(), IdModeloSubMarca: $('slctModelo').val() },
+                data: { 'idSubMarca': $('#slctSubMarca').val(),'idModeloSubMarca': $('#slctModelo').val() },
                 success: function (response) {
-
-                    $("#slctDescripcion").append('<option value="0">' + 'Selecciona una descripción' + '</option>');
+                    $("#slctDescripcion").append('<option value="0">' + 'Selecciona un descripción' + '</option>');
 
                     $.each(response.objects, function (indice) {
                         $("#slctDescripcion").append('<option value="'
-                            + response.objects[indice].CatalogoDescripcion.IdDescripcion + '">'
-                            + response.objects[indice].CatalogoDescripcion.NombreDescripcion + '</option>');
+                            + response.objects[indice].idDescripcion + '">'
+                            + response.objects[indice].catalogoDescripcion.nombreDescripcion + '</option>');
                     });
                 },
                 error: function (ex) {
                     alert('Failed.' + ex);
                 }
             });
+            }else
+            {
+                 $("#slctDescripcion").append('<option value="0">' + 'Selecciona un descripción' + '</option>');
+            }
+           
         });
 
         var LlenarMarca = function () {
@@ -145,8 +176,8 @@
                             + response.objects[indice].idMarca + '">'
                             + response.objects[indice].nombreMarca + '</option>');
                     });
-                    
-                    
+
+
                 },
                 error: function (ex) {
                     alert('Failed.' + ex);
@@ -155,14 +186,20 @@
 
         }
 
-        $("#btnConsultar").click(function () {
-            alert($("#txtCp").val());
-            $.ajax({
+        $("#txtCp").focusout(function () {
+           var longitud =  $("#txtCp").val().length;
+
+           console.log(longitud);
+            if(longitud==5)
+            {
+                $("#txtCp").css('border-color', 'black');
+                $.ajax({
                 type: 'GET',
                 url: '/Examen/ConsultaCodigo/{codigoPostal}',
                 dataType: 'json',
                 data: { codigoPostal: $('#txtCp').val() },
                 success: function (response) {
+                    $('#slctColinia ').empty("option");
 
                     var obj = $.parseJSON(response);
                     var obj2 = $.parseJSON(obj.CatalogoJsonString)
@@ -192,14 +229,32 @@
                     alert('Failed.' + ex);
                 }
             });
+            }
+            else
+            {
+                $("#txtEstado").val(" ");
+                $("#txtMunicipio").val(" ");
+                $("#slctColinia").val(" ");
+                $("#slctColinia").empty(" option")
+                
+                $("#txtCp").css('border-color', 'red');
+                 $('#lblCp').attr('disabled','false');
+                $('#lblCp').text("El código postal debe de tener 5 caracteres.");
+               
+            }
+           
         });
+
         if (!marcalleno) {
             LlenarMarca();
             marcalleno = true;
         }
+        
+
+
     });
 
 
-    
+
 
 </script>

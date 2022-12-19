@@ -87,15 +87,18 @@ namespace BL
             {
                 using (DL.AsantiagoExamenAarcoContext context = new DL.AsantiagoExamenAarcoContext())
                 {
-
+                    
                     var getAll = context.Descripcions.FromSqlRaw($"YearGetByIdSubMarca '{idSubMarca}'").ToList();
                     //var gt = context.Descripcions.Join(context.CatalogoDescripcions,i=>i,o=>o,(i,o)=>i).
                     //    Where(x => x.IdSubMarca == idSubMarca).ToList().Distinct();
-                    getAll.Distinct();
+                  
                     result.Objects = new List<object>();
 
                     if (getAll != null)
                     {
+                        
+                        int[] otro =new int[ getAll.Count()]; 
+                        int i = 0;
                         foreach (var obj in getAll)
                         {
                             ML.Descripcion descripcion = new ML.Descripcion();
@@ -103,14 +106,22 @@ namespace BL
                             descripcion.ModeloSubMarca = new ML.ModeloSubMarca();
                             descripcion.ModeloSubMarca.IdModeloSubMarca = obj.IdModeloSubMarca.Value;
                             descripcion.ModeloSubMarca.YearModeloSubMarca = obj.YearModeloSubMarca.Value;
+                            
                             descripcion.SubMarca = new ML.SubMarca();
                             descripcion.SubMarca.IdSubMarca = obj.IdSubMarca.Value;
-                            //descripcion.CatalogoDescripcion = new ML.CatalogoDescripcion();
-                            //descripcion.CatalogoDescripcion.IdCatalogoDescripcion = obj.IdCatalogoDescripcion.Value;
+                            descripcion.CatalogoDescripcion = new ML.CatalogoDescripcion();
+                            descripcion.CatalogoDescripcion.IdCatalogoDescripcion = obj.IdCatalogoDescripcion.Value;
+                            bool v = otro.Contains(obj.YearModeloSubMarca.Value);
 
-                            result.Objects.Add(descripcion);
+                            if (!v)
+                            {
+                                otro[i++] = obj.YearModeloSubMarca.Value;
+                                result.Objects.Add(descripcion);
+                            }
+                               
                         }
                         result.Correct = true;
+                      
                     }
                     else
                     {
@@ -136,8 +147,8 @@ namespace BL
                 using (DL.AsantiagoExamenAarcoContext context = new DL.AsantiagoExamenAarcoContext())
                 {
 
-                    var getAll = context.Descripcions.FromSqlRaw($"GetBySubModeloMarca '{idSubMarca}','{idModelo}'").ToList();
-
+                    var getAll = context.Descripcions.FromSqlRaw($"GetBySubModeloMarca '{idModelo}','{idSubMarca}'").ToList();
+                  
                     result.Objects = new List<object>();
 
                     if (getAll != null)
@@ -145,6 +156,7 @@ namespace BL
                         foreach (var obj in getAll)
                         {
                             ML.Descripcion descripcion = new ML.Descripcion();
+                            descripcion.IdDescripcion = obj.IdDescripcion;
                             descripcion.CatalogoDescripcion = new ML.CatalogoDescripcion();
                             descripcion.CatalogoDescripcion.IdCatalogoDescripcion = obj.IdCatalogoDescripcion.Value;
                             descripcion.CatalogoDescripcion.NombreDescripcion = obj.NombreDescripcion;
@@ -152,6 +164,9 @@ namespace BL
                            descripcion.ModeloSubMarca = new ML.ModeloSubMarca();
                             descripcion.ModeloSubMarca.IdModeloSubMarca = obj.IdModeloSubMarca.Value;
                             descripcion.ModeloSubMarca.YearModeloSubMarca = obj.YearModeloSubMarca.Value;
+
+                            descripcion.SubMarca = new ML.SubMarca();
+                            descripcion.SubMarca.IdSubMarca = obj.IdSubMarca.Value;
 
                             result.Objects.Add(descripcion);
                         }

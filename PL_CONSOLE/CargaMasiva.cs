@@ -1,4 +1,5 @@
-﻿string ubicacionArchivo = "D:\\Auto\\ExamenAARCO_ASantiago\\PL_CONSOLE\\ArchivoTXT\\ListaDeAutos.txt";
+﻿string ubicacionArchivo = "C:\\Users\\digis\\OneDrive\\Documents\\Aldair Santiago Garcia\\ExamenAarco\\PL_CONSOLE\\ArchivoTXT\\ListaDeAutos.txt";
+
 System.IO.StreamReader archivo = new System.IO.StreamReader(ubicacionArchivo);
 int bandera = 0,contador=0;
 string linea;

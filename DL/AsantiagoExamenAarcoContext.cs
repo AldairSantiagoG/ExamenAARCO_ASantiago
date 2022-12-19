@@ -27,13 +27,13 @@ public partial class AsantiagoExamenAarcoContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=LAPTOP-SPSDITQD\\SQLEXPRESS; Database= ASantiagoExamenAARCO; Trusted_Connection=True; TrustServerCertificate=True; User ID=AWalKrawlerX; Password=;");
+        => optionsBuilder.UseSqlServer("Server=DESKTOP-G7UVJH5; Database= ASantiagoExamenAARCO; Trusted_Connection=True; TrustServerCertificate=True; User ID=sa; Password=pass@word1;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<CatalogoDescripcion>(entity =>
         {
-            entity.HasKey(e => e.IdCatalogoDescripcion).HasName("PK__Catalogo__02B4B61192765B8D");
+            entity.HasKey(e => e.IdCatalogoDescripcion).HasName("PK__Catalogo__02B4B611A710406B");
 
             entity.ToTable("CatalogoDescripcion");
 
@@ -44,7 +44,7 @@ public partial class AsantiagoExamenAarcoContext : DbContext
 
         modelBuilder.Entity<Descripcion>(entity =>
         {
-            entity.HasKey(e => e.IdDescripcion).HasName("PK__Descripc__130EFED6CC30ED52");
+            entity.HasKey(e => e.IdDescripcion).HasName("PK__Descripc__130EFED6D7624673");
 
             entity.ToTable("Descripcion");
 
@@ -54,20 +54,20 @@ public partial class AsantiagoExamenAarcoContext : DbContext
 
             entity.HasOne(d => d.IdCatalogoDescripcionNavigation).WithMany(p => p.Descripcions)
                 .HasForeignKey(d => d.IdCatalogoDescripcion)
-                .HasConstraintName("FK__Descripci__IdCat__2E1BDC42");
+                .HasConstraintName("FK__Descripci__IdCat__1A14E395");
 
             entity.HasOne(d => d.IdModeloSubMarcaNavigation).WithMany(p => p.Descripcions)
                 .HasForeignKey(d => d.IdModeloSubMarca)
-                .HasConstraintName("FK__Descripci__IdMod__2D27B809");
+                .HasConstraintName("FK__Descripci__IdMod__1920BF5C");
 
             entity.HasOne(d => d.IdSubMarcaNavigation).WithMany(p => p.Descripcions)
                 .HasForeignKey(d => d.IdSubMarca)
-                .HasConstraintName("FK__Descripci__IdSub__2F10007B");
+                .HasConstraintName("FK__Descripci__IdSub__1B0907CE");
         });
 
         modelBuilder.Entity<Marca>(entity =>
         {
-            entity.HasKey(e => e.IdMarca).HasName("PK__Marca__4076A887A43D5E9F");
+            entity.HasKey(e => e.IdMarca).HasName("PK__Marca__4076A8879AA6B967");
 
             entity.ToTable("Marca");
 
@@ -78,7 +78,7 @@ public partial class AsantiagoExamenAarcoContext : DbContext
 
         modelBuilder.Entity<ModeloSubMarca>(entity =>
         {
-            entity.HasKey(e => e.IdModeloSubMarca).HasName("PK__ModeloSu__4544C2D43805FE59");
+            entity.HasKey(e => e.IdModeloSubMarca).HasName("PK__ModeloSu__4544C2D492D13596");
 
             entity.ToTable("ModeloSubMarca");
 
@@ -87,7 +87,7 @@ public partial class AsantiagoExamenAarcoContext : DbContext
 
         modelBuilder.Entity<SubMarca>(entity =>
         {
-            entity.HasKey(e => e.IdSubMarca).HasName("PK__SubMarca__40FA6C197A47E99F");
+            entity.HasKey(e => e.IdSubMarca).HasName("PK__SubMarca__40FA6C1940744DFA");
 
             entity.ToTable("SubMarca");
 
@@ -97,7 +97,7 @@ public partial class AsantiagoExamenAarcoContext : DbContext
 
             entity.HasOne(d => d.IdMarcaNavigation).WithMany(p => p.SubMarcas)
                 .HasForeignKey(d => d.IdMarca)
-                .HasConstraintName("FK__SubMarca__IdMarc__267ABA7A");
+                .HasConstraintName("FK__SubMarca__IdMarc__1273C1CD");
         });
 
         OnModelCreatingPartial(modelBuilder);

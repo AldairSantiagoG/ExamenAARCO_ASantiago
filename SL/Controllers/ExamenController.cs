@@ -53,11 +53,12 @@ namespace SL.Controllers
                 return BadRequest(result);
             }
         }
-        [HttpPost]
+        [HttpGet]
         [Route("/GetDescripcion/")]
-        public IActionResult GetAllDescripcion([FromBody] ML.Descripcion descripcion)
+        public IActionResult GetAllDescripcion(int idSubMarca,int idModeloSubMarca)
         {
-            ML.Result result = BL.Descripcion.GetBySubModeloMarca(descripcion.SubMarca.IdSubMarca,descripcion.ModeloSubMarca.IdModeloSubMarca);
+           
+            ML.Result result = BL.Descripcion.GetBySubModeloMarca(idSubMarca,idModeloSubMarca);
             if (result.Correct)
             {
                 return Ok(result);
