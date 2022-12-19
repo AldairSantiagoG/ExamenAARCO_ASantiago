@@ -48,7 +48,6 @@
     </div>
     <div class="row">
         <input type="text" id="txtCp" value="" />
-        <label id="lblCp" hidden="true"></label>
         <br />
         <input type="text" id="txtEstado" value="" disabled />
         <br />
@@ -61,18 +60,55 @@
         <button id="btnConsultar">Consultar</button>
     </div>
 </div>
+
+   <div class="modal fade" id="modalConfirmacion" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Cotización</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="contenedores">
+                        
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="btnAceptar" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
 <script src="~/lib/jquery/dist/jquery.js"></script>
-
-
 <script>
+
     $(document).ready(function () {
         var marcalleno= false;
         var submarca = false;
         var modelo = false;
         var descripcion = false;
+          var arreglo = "";
+        let UrlPeticion = "https://api-test.aarco.com.mx/api-examen/api/examen/peticion/";
+        let ArregloImagenes = ["<img src='~/Imagenes/AXA.png' style='width: 100px;'/>", 
+        "<img src='~/Imagenes/CHUBB.png' style='width: 100px;'/>", 
+        "<img src='~/Imagenes/ZURICH.png' style='width: 100px;'/>", 
+        "<img src='~/Imagenes/QUALITAS.png' style='width: 100px;'/>",
+        "<img src='~/Imagenes/HDI.png' style='width: 100px;' />"]
 
+        $('#btnAceptar').click(function(){
+            $('#modalConfirmacion').modal("hide");
+        });
 
-
+        $('#slcrMarca').focus();
+        //$('#divModalConfirmacion').modal('hide');
          //cambioOptionSubMarca
         $("#slctMarca").change(function () {
             $("#slctSubMarca ").empty("option");//vaciar
@@ -249,12 +285,112 @@
             LlenarMarca();
             marcalleno = true;
         }
+       
+       document.getElementById("txtCp").maxLength = 5;
+       $("#txtCp").keypress( function(e) {
         
+        var caracter = e.key;
+        if (!/^[0-9]+$/g.test(caracter)) {
+            
+            return false;
+           
+        }
+        else {
+            $('#txtCp').text("");
+            return true;
+        }
+
+       });
+
+        $('#btnConsultar').click(function(){
+        var marca = $('#slctMarca').val();
+        var submarca =$('#slctSubMarca').val();
+        var modelo =$('#slctModelo').val();
+        var descripcion =$('#slctDescripcion').val();
+        var cp = $('#txtCp').val();
+
+        var colonia =$('#slctColinia').val();
+        var bandera = true;
+
+        if(marca == undefined || marca==0 ){
+             $("#slctMarca").css('border-color', 'red');
+             bandera=false;
+        }else{
+            $("#slctMarca").css('border-color', 'black');
+        }
+        if(submarca == undefined || submarca==0){
+            $("#slctSubMarca").css('border-color', 'red');
+            bandera=false;
+        }else{
+            $("#slctSubMarca").css('border-color', 'black');
+        }
+        if(modelo == undefined || modelo==0){
+            $("#slctModelo").css('border-color', 'red');
+            bandera=false;
+        }else{
+            $("#slctModelo").css('border-color', 'black');
+        }
+        if(descripcion == undefined || descripcion==0){
+            $("#slctDescripcion").css('border-color', 'red');
+            bandera=false;
+        }else{
+            $("#slctDescripcion").css('border-color', 'black');
+        }
+        if(cp == undefined || cp==0){
+            $("#txtCp").css('border-color', 'red');
+            bandera=false;
+        }else{
+            $("#txtCp").css('border-color', 'black');
+        }
+     
+        if(colonia == undefined || colonia==0){
+            $("#slctColonia").css('border-color', 'red');
+            bandera=false;
+        }else{
+            $("#slctColonia").css('border-color', 'black');
+        }
+        if(bandera){
+             $("#modalConfirmacion").modal("show");
+             console.log(cp);
+             $.post("https://api-test.aarco.com.mx/api-examen/api/examen/crear-peticion/", { "DescripcionId": cp }, function (resultado) {
+                console.log(resultado);
+             setTimeout(function () {
+
+                 UrlPeticion = UrlPeticion + resultado;
+                 GetPeticion(UrlPeticion);
+
+             }, 2000)
+    
+            });
+        }
+    });
+
+       function GetPeticion(UrlPeticion) {
+            console.log(UrlPeticion);
+        $.get(UrlPeticion, {}, function (resultado) {
+           
+            if (resultado.PeticionFinalizada) {
+
+                for (let datos = 0; datos < resultado.aseguradoras.length; datos++) {
+                    setTimeout(function () {
+                        $("#contenedores").append(ArregloImagenes[resultado.aseguradoras[datos].AseguradoraId]);
+                    },2000);
+                }
+
+            } else {
+
+                GetPeticion(UrlPeticion);
+            }
+        });
+    }
+
 
 
     });
-
-
-
-
 </script>
+
+
+
+
+
+
