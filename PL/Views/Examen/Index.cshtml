@@ -1,0 +1,205 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+
+
+
+
+<h1>Index</h1>
+<div class="container">
+    <div class="row">
+        <h2>Vehículo</h2>
+        <br />
+        <select id="slctMarca">
+            
+        </select>
+        <br />
+        <select id="slctSubMarca">
+            
+        </select>
+        <br />
+        <select id="slctModelo">
+            
+        </select>
+        <br />
+        <select id="slctDescripcion">
+            
+        </select>
+        <br />
+
+    </div>
+    <div class="row">
+    </div>
+    <br />
+    <div class="row text-center">
+        <h2>Domicilio</h2>
+    </div>
+    <div class="row">
+        <input type="text" id="txtCp" value="02410" />
+        <br />
+        <input type="text" id="txtEstado" value="" disabled />
+        <br />
+        <input type="text" id="txtMunicipio" value="" disabled />
+        <br />
+        <select id="slctColinia">
+            
+        </select>
+        <br />
+
+
+        <button id="btnConsultar">Consultar</button>
+    </div>
+</div>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+
+
+<script>
+    $(document).ready(function () {
+        var marcalleno= false;
+        var submarca = false;
+        var modelo = false;
+        var descripcion = false;
+
+                 
+        
+         //cambioOptionSubMarca
+        $("#slctMarca").change(function () {
+            $("#slctSubMarca").empty();//vaciar
+            $.ajax({
+                type: 'GET',
+                url: 'http://localhost:5028/GetSubMarcas/',
+                dataType: 'json',
+                data: { IdMarca: $('#slctMarca').val() },
+                success: function (response) {
+                    $("#slctSubMarca").append('<option value="0">' + 'Selecciona una submarca' + '</option>');
+                    $.each(response.objects, function (indice) {
+                        $("#slctSubMarca").append('<option value="'
+                            + response.objects[indice].idSubMarca + '">'
+                            + response.objects[indice].nombreSubMarca + '</option>');
+                    });
+                },
+                error: function (ex) {
+                    alert('Failed.' + ex);
+                }
+            });
+        });
+
+        //cambioOptionModelo
+        $("#slctSubMarca").change(function () {
+            $("#slctModelo").empty();//vaciar
+            $.ajax({
+                type: 'GET',
+                url: 'http://localhost:5028/GetModelo/',
+                dataType: 'json',
+                data: { IdSubMarca: $('#slctSubMarca').val() },
+                success: function (response) {
+
+                    $("#slctModelo").append('<option value="0">' + 'Selecciona un modelo' + '</option>');
+
+                    $.each(response.objects, function (indice) {
+                        $("#slctModelo").append('<option value="'
+                            + response.objects[indice].modeloSubMarca.idModeloSubMarca + '">'
+                            + response.objects[indice].modeloSubMarca.yearModeloSubMarca + '</option>');
+                    });
+                },
+                error: function (ex) {
+                    alert('Failed.' + ex);
+                }
+            });
+        });
+       
+        //cambioOptionDescripcion
+        $("#slctModelo").change(function () {
+            $("#slctColinia").empty();//vaciar
+            $.ajax({
+                type: 'POST',
+                url: 'http://localhost:5028/GetDescripcion/',
+                dataType: 'json',
+                data: { IdSubMarca: $('#slctSubMarca').val(), IdModeloSubMarca: $('slctModelo').val() },
+                success: function (response) {
+
+                    $("#slctDescripcion").append('<option value="0">' + 'Selecciona una descripción' + '</option>');
+
+                    $.each(response.objects, function (indice) {
+                        $("#slctDescripcion").append('<option value="'
+                            + response.objects[indice].CatalogoDescripcion.IdDescripcion + '">'
+                            + response.objects[indice].CatalogoDescripcion.NombreDescripcion + '</option>');
+                    });
+                },
+                error: function (ex) {
+                    alert('Failed.' + ex);
+                }
+            });
+        });
+
+        var LlenarMarca = function () {
+            $.ajax({
+                type: 'GET',
+                url: 'http://localhost:5028/GetMarcas',
+                dataType: 'json',
+                data: {  },
+                success: function (response) {
+                    $("#slctMarca").append('<option value="0">' + 'Selecciona una marca' + '</option>');
+                    $.each(response.objects, function (indice) {
+                        $("#slctMarca").append('<option value="'
+                            + response.objects[indice].idMarca + '">'
+                            + response.objects[indice].nombreMarca + '</option>');
+                    });
+                    
+                    
+                },
+                error: function (ex) {
+                    alert('Failed.' + ex);
+                }
+            });
+
+        }
+
+        $("#btnConsultar").click(function () {
+            alert($("#txtCp").val());
+            $.ajax({
+                type: 'GET',
+                url: '/Examen/ConsultaCodigo/{codigoPostal}',
+                dataType: 'json',
+                data: { codigoPostal: $('#txtCp').val() },
+                success: function (response) {
+
+                    var obj = $.parseJSON(response);
+                    var obj2 = $.parseJSON(obj.CatalogoJsonString)
+                    console.log(obj2);
+                    console.log(obj2[0].Municipio.Estado.sEstado);
+                    console.log(obj2[0].Municipio.sMunicipio);
+                    console.log(obj2[0].Ubicacion.length)
+                    console.log(obj2[0].Ubicacion[0].sUbicacion);
+
+                    //$('#txtEstado').val(obj2[0].Municipio.Estado.iIdEstado);
+                    $('#txtEstado').val(obj2[0].Municipio.Estado.sEstado);
+                    $('#txtMunicipio').val(obj2[0].Municipio.sMunicipio);
+                   // $('#txtMunicipio').val(obj2[0].Municipio.iIdMunicipio);
+                    if (obj2[0].Ubicacion.length > 1) {
+                        $.each(obj2[0].Ubicacion, function (indice) {
+                            $("#slctColinia").append('<option value="'
+                                + obj2[0].Ubicacion[indice].iIdUbicacion + '">'
+                                + obj2[0].Ubicacion[indice].sUbicacion + '</option>');
+                        });
+                    } else {
+                        $("#slctColinia").append('<option value="'
+                            + obj2[0].Ubicacion[0].iIdUbicacion + '">'
+                            + obj2[0].Ubicacion[0].sUbicacion + '</option>');
+                    }
+                },
+                error: function (ex) {
+                    alert('Failed.' + ex);
+                }
+            });
+        });
+        if (!marcalleno) {
+            LlenarMarca();
+            marcalleno = true;
+        }
+    });
+
+
+    
+
+</script>

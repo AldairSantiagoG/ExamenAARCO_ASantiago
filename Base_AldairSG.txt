@@ -1,0 +1,2 @@
+CONEXION A LA BASE MEDIANTE ENTITY CORE
+Scaffold-DbContext "Server=LAPTOP-SPSDITQD\SQLEXPRESS; Database= ASantiagoExamenAARCO; Trusted_Connection=True; TrustServerCertificate=True; User ID=AWalKrawlerX; Password=;" Microsoft.EntityFrameworkCore.SqlServer
