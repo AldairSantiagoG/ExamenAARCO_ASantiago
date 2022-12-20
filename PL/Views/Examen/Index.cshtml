@@ -13,28 +13,24 @@
         <label class="align-content-lg-start">Marca</label>
         <div class="row text-center">
             <select id="slctMarca">
-                
             </select>
         </div>
 
         <label>SubMarca</label>
         <div class="row text-center">
             <select id="slctSubMarca">
-                
             </select>
         </div>
 
         <label>Modelo</label>
         <div class="row text-center">
             <select id="slctModelo">
-                
             </select>
         </div>
 
         <label>Descripción</label>
         <div class="row text-center">
             <select id="slctDescripcion">
-               
             </select>
         </div>
         <br />
@@ -61,29 +57,27 @@
     </div>
 </div>
 
-   <div class="modal fade" id="modalConfirmacion" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Cotización</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div id="contenedores">
-                        
-                        </div>
+<div class="modal fade" id="modalConfirmacion" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document" style="max-width: 40%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Cotización</h5>
 
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" id="btnAceptar" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
-                        
-                    </div>
+            </div>
+            <div class="modal-body">
+                <div id="contenedores" class="row">
+
                 </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnAceptar" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+
             </div>
         </div>
+    </div>
+</div>
 
 
 
@@ -91,112 +85,119 @@
 <script>
 
     $(document).ready(function () {
-        var marcalleno= false;
+
+
+
+        var marcalleno = false;
         var submarca = false;
         var modelo = false;
         var descripcion = false;
-          var arreglo = "";
+        var arreglo = "";
         let UrlPeticion = "https://api-test.aarco.com.mx/api-examen/api/examen/peticion/";
-        let ArregloImagenes = ["<img src='~/Imagenes/AXA.png' style='width: 100px;'/>", 
-        "<img src='~/Imagenes/CHUBB.png' style='width: 100px;'/>", 
-        "<img src='~/Imagenes/ZURICH.png' style='width: 100px;'/>", 
-        "<img src='~/Imagenes/QUALITAS.png' style='width: 100px;'/>",
-        "<img src='~/Imagenes/HDI.png' style='width: 100px;' />"]
+        let ArregloImagenes = ["/Imagenes/CHUBB.png", "/Imagenes/HDI.png", "/Imagenes/ZURICH.png", "/Imagenes/QUALITAS.png", "/Imagenes/AXA.png"];
 
-        $('#btnAceptar').click(function(){
+
+
+        $('#btnAceptar').click(function () {
             $('#modalConfirmacion').modal("hide");
         });
 
         $('#slcrMarca').focus();
         //$('#divModalConfirmacion').modal('hide');
-         //cambioOptionSubMarca
+        //cambioOptionSubMarca
         $("#slctMarca").change(function () {
             $("#slctSubMarca ").empty("option");//vaciar
 
-            if($('#slctMarca').val()!=undefined &&$('#slctMarca').val()>0 )
-            {
+            if ($('#slctMarca').val() != undefined || $('#slctMarca').val() == 0) {
                 $.ajax({
-                type: 'GET',
-                url: 'http://localhost:5028/GetSubMarcas/',
-                dataType: 'json',
-                data: { IdMarca: $('#slctMarca').val() },
-                success: function (response) {
-                    $("#slctSubMarca").append('<option value="0">' + 'Selecciona una submarca' + '</option>');
-                    $.each(response.objects, function (indice) {
-                        $("#slctSubMarca").append('<option value="'
-                            + response.objects[indice].idSubMarca + '">'
-                            + response.objects[indice].nombreSubMarca + '</option>');
-                    });
-                },
-                error: function (ex) {
-                    alert('Failed.' + ex);
-                }
-            });
+                    type: 'GET',
+                    url: 'http://localhost:5028/GetSubMarcas/',
+                    dataType: 'json',
+                    data: { IdMarca: $('#slctMarca').val() },
+                    success: function (response) {
+                        $("#slctSubMarca").append('<option value="0">' + 'Selecciona una submarca' + '</option>');
+                        $.each(response.objects, function (indice) {
+                            $("#slctSubMarca").append('<option value="'
+                                + response.objects[indice].idSubMarca + '">'
+                                + response.objects[indice].nombreSubMarca + '</option>');
+                        });
+                    },
+                    error: function (ex) {
+                        alert('Failed.' + ex);
+                    }
+                });
             }
-            else{
+            else {
+                $("#slctSubMarca ").empty("option");
+                $("#slctModelo ").empty("option");
+                $("#slctDescripcion ").empty("option");
                 $("#slctSubMarca").append('<option value="0">' + 'Selecciona una submarca' + '</option>');
+                $("#slctModelo").append('<option value="0">' + 'Selecciona un modelo' + '</option>');
+                $("#slctDescripcion").append('<option value="0">' + 'Selecciona un descripción' + '</option>');
             }
-           
+
         });
 
         //cambioOptionModelo
         $("#slctSubMarca").change(function () {
             $("#slctModelo ").empty("option");//vaciar
-            if($('#slctSubMarca').val()!=undefined&&$('#slctSubMarca').val()>0){
-                 $.ajax({
-                type: 'GET',
-                url: 'http://localhost:5028/GetModelo/',
-                dataType: 'json',
-                data: { IdSubMarca: $('#slctSubMarca').val() },
-                success: function (response) {
+            if ($('#slctSubMarca').val() != undefined || $('#slctSubMarca').val() == 0) {
+                $.ajax({
+                    type: 'GET',
+                    url: 'http://localhost:5028/GetModelo/',
+                    dataType: 'json',
+                    data: { IdSubMarca: $('#slctSubMarca').val() },
+                    success: function (response) {
 
-                    $("#slctModelo").append('<option value="0">' + 'Selecciona un modelo' + '</option>');
+                        $("#slctModelo").append('<option value="0">' + 'Selecciona un modelo' + '</option>');
 
-                    $.each(response.objects, function (indice) {
-                        $("#slctModelo").append('<option value="'
-                            + response.objects[indice].modeloSubMarca.idModeloSubMarca + '">'
-                            + response.objects[indice].modeloSubMarca.yearModeloSubMarca + '</option>');
-                    });
-                },
-                error: function (ex) {
-                    alert('Failed.' + ex);
-                }
-            });
+                        $.each(response.objects, function (indice) {
+                            $("#slctModelo").append('<option value="'
+                                + response.objects[indice].modeloSubMarca.idModeloSubMarca + '">'
+                                + response.objects[indice].modeloSubMarca.yearModeloSubMarca + '</option>');
+                        });
+                    },
+                    error: function (ex) {
+                        alert('Failed.' + ex);
+                    }
+                });
             }
-            else{
+            else {
+                $("#slctModelo ").empty("option");
+                $("#slctDescripcion ").empty("option")
                 $("#slctModelo").append('<option value="0">' + 'Selecciona un modelo' + '</option>');
+                $("#slctDescripcion").append('<option value="0">' + 'Selecciona un descripción' + '</option>');
             }
-            
-           
+
+
         });
 
         //cambioOptionDescripcion
         $("#slctModelo").change(function () {
             $("#slctDescripcion ").empty("option");//vaciar
-            if($('#slctSubMarca').val()!= undefined && $('#slctSubMarca').val()>0){
-                 $.ajax({
-                type: 'GET',
-                url: 'http://localhost:5028/GetDescripcion/',
-                dataType: 'json',
-                data: { 'idSubMarca': $('#slctSubMarca').val(),'idModeloSubMarca': $('#slctModelo').val() },
-                success: function (response) {
-                    $("#slctDescripcion").append('<option value="0">' + 'Selecciona un descripción' + '</option>');
+            if ($('#slctSubMarca').val() != undefined || $('#slctSubMarca').val() == 0) {
+                $.ajax({
+                    type: 'GET',
+                    url: 'http://localhost:5028/GetDescripcion/',
+                    dataType: 'json',
+                    data: { 'idSubMarca': $('#slctSubMarca').val(), 'idModeloSubMarca': $('#slctModelo').val() },
+                    success: function (response) {
+                        $("#slctDescripcion").append('<option value="0">' + 'Selecciona un descripción' + '</option>');
 
-                    $.each(response.objects, function (indice) {
-                        $("#slctDescripcion").append('<option value="'
-                            + response.objects[indice].idDescripcion + '">'
-                            + response.objects[indice].catalogoDescripcion.nombreDescripcion + '</option>');
-                    });
-                },
-                error: function (ex) {
-                    alert('Failed.' + ex);
-                }
-            });
-            }else
-            {
-                 $("#slctDescripcion").append('<option value="0">' + 'Selecciona un descripción' + '</option>');
+                        $.each(response.objects, function (indice) {
+                            $("#slctDescripcion").append('<option value="'
+                                + response.objects[indice].idDescripcion + '">'
+                                + response.objects[indice].catalogoDescripcion.nombreDescripcion + '</option>');
+                        });
+                    },
+                    error: function (ex) {
+                        alert('Failed.' + ex);
+                    }
+                });
+            } else {
+                $("#slctDescripcion").append('<option value="0">' + 'Selecciona un descripción' + '</option>');
             }
-           
+
         });
 
         var LlenarMarca = function () {
@@ -204,7 +205,7 @@
                 type: 'GET',
                 url: 'http://localhost:5028/GetMarcas',
                 dataType: 'json',
-                data: {  },
+                data: {},
                 success: function (response) {
                     $("#slctMarca").append('<option value="0">' + 'Selecciona una marca' + '</option>');
                     $.each(response.objects, function (indice) {
@@ -223,168 +224,199 @@
         }
 
         $("#txtCp").focusout(function () {
-           var longitud =  $("#txtCp").val().length;
+            var longitud = $("#txtCp").val().length;
 
-           console.log(longitud);
-            if(longitud==5)
-            {
+            console.log(longitud);
+            if (longitud == 5) {
                 $("#txtCp").css('border-color', 'black');
                 $.ajax({
-                type: 'GET',
-                url: '/Examen/ConsultaCodigo/{codigoPostal}',
-                dataType: 'json',
-                data: { codigoPostal: $('#txtCp').val() },
-                success: function (response) {
-                    $('#slctColinia ').empty("option");
+                    type: 'GET',
+                    url: '/Examen/ConsultaCodigo/{codigoPostal}',
+                    dataType: 'json',
+                    data: { codigoPostal: $('#txtCp').val() },
+                    success: function (response) {
+                        $('#slctColinia ').empty("option");
 
-                    var obj = $.parseJSON(response);
-                    var obj2 = $.parseJSON(obj.CatalogoJsonString)
-                    console.log(obj2);
-                    console.log(obj2[0].Municipio.Estado.sEstado);
-                    console.log(obj2[0].Municipio.sMunicipio);
-                    console.log(obj2[0].Ubicacion.length)
-                    console.log(obj2[0].Ubicacion[0].sUbicacion);
+                        var obj = $.parseJSON(response);
+                        var obj2 = $.parseJSON(obj.CatalogoJsonString)
+                        console.log(obj2);
+                        console.log(obj2[0].Municipio.Estado.sEstado);
+                        console.log(obj2[0].Municipio.sMunicipio);
+                        console.log(obj2[0].Ubicacion.length)
+                        console.log(obj2[0].Ubicacion[0].sUbicacion);
 
-                    //$('#txtEstado').val(obj2[0].Municipio.Estado.iIdEstado);
-                    $('#txtEstado').val(obj2[0].Municipio.Estado.sEstado);
-                    $('#txtMunicipio').val(obj2[0].Municipio.sMunicipio);
-                   // $('#txtMunicipio').val(obj2[0].Municipio.iIdMunicipio);
-                    if (obj2[0].Ubicacion.length > 1) {
-                        $.each(obj2[0].Ubicacion, function (indice) {
+                        //$('#txtEstado').val(obj2[0].Municipio.Estado.iIdEstado);
+                        $('#txtEstado').val(obj2[0].Municipio.Estado.sEstado);
+                        $('#txtMunicipio').val(obj2[0].Municipio.sMunicipio);
+                        // $('#txtMunicipio').val(obj2[0].Municipio.iIdMunicipio);
+                        if (obj2[0].Ubicacion.length > 1) {
+                            $.each(obj2[0].Ubicacion, function (indice) {
+                                $("#slctColinia").append('<option value="'
+                                    + obj2[0].Ubicacion[indice].iIdUbicacion + '">'
+                                    + obj2[0].Ubicacion[indice].sUbicacion + '</option>');
+                            });
+                        } else {
                             $("#slctColinia").append('<option value="'
-                                + obj2[0].Ubicacion[indice].iIdUbicacion + '">'
-                                + obj2[0].Ubicacion[indice].sUbicacion + '</option>');
-                        });
-                    } else {
-                        $("#slctColinia").append('<option value="'
-                            + obj2[0].Ubicacion[0].iIdUbicacion + '">'
-                            + obj2[0].Ubicacion[0].sUbicacion + '</option>');
+                                + obj2[0].Ubicacion[0].iIdUbicacion + '">'
+                                + obj2[0].Ubicacion[0].sUbicacion + '</option>');
+                        }
+                    },
+                    error: function (ex) {
+                        alert('Failed.' + ex);
                     }
-                },
-                error: function (ex) {
-                    alert('Failed.' + ex);
-                }
-            });
+                });
             }
-            else
-            {
+            else {
                 $("#txtEstado").val(" ");
                 $("#txtMunicipio").val(" ");
                 $("#slctColinia").val(" ");
                 $("#slctColinia").empty(" option")
-                
+
                 $("#txtCp").css('border-color', 'red');
-                 $('#lblCp').attr('disabled','false');
+                $('#lblCp').attr('disabled', 'false');
                 $('#lblCp').text("El código postal debe de tener 5 caracteres.");
-               
+
             }
-           
+
         });
 
         if (!marcalleno) {
             LlenarMarca();
             marcalleno = true;
         }
-       
-       document.getElementById("txtCp").maxLength = 5;
-       $("#txtCp").keypress( function(e) {
-        
-        var caracter = e.key;
-        if (!/^[0-9]+$/g.test(caracter)) {
-            
-            return false;
-           
-        }
-        else {
-            $('#txtCp').text("");
-            return true;
-        }
 
-       });
+        document.getElementById("txtCp").maxLength = 5;
+        $("#txtCp").keypress(function (e) {
 
-        $('#btnConsultar').click(function(){
-        var marca = $('#slctMarca').val();
-        var submarca =$('#slctSubMarca').val();
-        var modelo =$('#slctModelo').val();
-        var descripcion =$('#slctDescripcion').val();
-        var cp = $('#txtCp').val();
+            var caracter = e.key;
+            if (!/^[0-9]+$/g.test(caracter)) {
 
-        var colonia =$('#slctColinia').val();
-        var bandera = true;
+                return false;
 
-        if(marca == undefined || marca==0 ){
-             $("#slctMarca").css('border-color', 'red');
-             bandera=false;
-        }else{
-            $("#slctMarca").css('border-color', 'black');
-        }
-        if(submarca == undefined || submarca==0){
-            $("#slctSubMarca").css('border-color', 'red');
-            bandera=false;
-        }else{
-            $("#slctSubMarca").css('border-color', 'black');
-        }
-        if(modelo == undefined || modelo==0){
-            $("#slctModelo").css('border-color', 'red');
-            bandera=false;
-        }else{
-            $("#slctModelo").css('border-color', 'black');
-        }
-        if(descripcion == undefined || descripcion==0){
-            $("#slctDescripcion").css('border-color', 'red');
-            bandera=false;
-        }else{
-            $("#slctDescripcion").css('border-color', 'black');
-        }
-        if(cp == undefined || cp==0){
-            $("#txtCp").css('border-color', 'red');
-            bandera=false;
-        }else{
-            $("#txtCp").css('border-color', 'black');
-        }
-     
-        if(colonia == undefined || colonia==0){
-            $("#slctColonia").css('border-color', 'red');
-            bandera=false;
-        }else{
-            $("#slctColonia").css('border-color', 'black');
-        }
-        if(bandera){
-             $("#modalConfirmacion").modal("show");
-             console.log(cp);
-             $.post("https://api-test.aarco.com.mx/api-examen/api/examen/crear-peticion/", { "DescripcionId": cp }, function (resultado) {
-                console.log(resultado);
-             setTimeout(function () {
+            }
+            else {
+                $('#txtCp').text("");
+                return true;
+            }
 
-                 UrlPeticion = UrlPeticion + resultado;
-                 GetPeticion(UrlPeticion);
+        });
 
-             }, 2000)
-    
-            });
-        }
-    });
+        $('#btnConsultar').click(function () {
+            var marca = $('#slctMarca').val();
+            var submarca = $('#slctSubMarca').val();
+            var modelo = $('#slctModelo').val();
+            var descripcion = $('#slctDescripcion').val();
+            var cp = $('#txtCp').val();
 
-       function GetPeticion(UrlPeticion) {
-            console.log(UrlPeticion);
-        $.get(UrlPeticion, {}, function (resultado) {
-           
-            if (resultado.PeticionFinalizada) {
+            var colonia = $('#slctColinia').val();
+            var bandera = true;
 
-                for (let datos = 0; datos < resultado.aseguradoras.length; datos++) {
-                    setTimeout(function () {
-                        $("#contenedores").append(ArregloImagenes[resultado.aseguradoras[datos].AseguradoraId]);
-                    },2000);
-                }
-
+            if (marca == undefined || marca == 0) {
+                $("#slctMarca").css('border-color', 'red');
+                bandera = false;
             } else {
+                $("#slctMarca").css('border-color', 'black');
+            }
+            if (submarca == undefined || submarca == 0) {
+                $("#slctSubMarca").css('border-color', 'red');
+                bandera = false;
+            } else {
+                $("#slctSubMarca").css('border-color', 'black');
+            }
+            if (modelo == undefined || modelo == 0) {
+                $("#slctModelo").css('border-color', 'red');
+                bandera = false;
+            } else {
+                $("#slctModelo").css('border-color', 'black');
+            }
+            if (descripcion == undefined || descripcion == 0) {
+                $("#slctDescripcion").css('border-color', 'red');
+                bandera = false;
+            } else {
+                $("#slctDescripcion").css('border-color', 'black');
+            }
+            if (cp == undefined || cp == 0) {
+                $("#txtCp").css('border-color', 'red');
+                bandera = false;
+            } else {
+                $("#txtCp").css('border-color', 'black');
+            }
 
-                GetPeticion(UrlPeticion);
+            if (colonia == undefined || colonia == 0) {
+                $("#slctColonia").css('border-color', 'red');
+                bandera = false;
+            } else {
+                $("#slctColonia").css('border-color', 'black');
+            }
+            if (bandera) {
+                $('#contenedores').empty();
+                $("#modalConfirmacion").modal("show");
+                console.log(cp);
+                $.post("https://api-test.aarco.com.mx/api-examen/api/examen/crear-peticion/", { "DescripcionId": descripcion }, function (resultado) {
+                    console.log(resultado);
+                    setTimeout(function () {
+
+                        UrlPeticion = UrlPeticion + resultado;
+                        GetPeticion(UrlPeticion);
+
+                    }, 2000)
+
+                });
             }
         });
-    }
+        //var datos =5;
+        //var contador =0;
+        function GetPeticion(UrlPeticion) {
+            console.log(UrlPeticion);
+
+            $.get(UrlPeticion, {}, function (resultado) {
+                //console.log(resultado);
+                if (resultado.PeticionFinalizada) {
+                    console.log("Peticion Finalizada");
+                    for (let datos = 0; datos < resultado.aseguradoras.length; datos++) {
+                        espera(datos, resultado.aseguradoras[datos].Tarifa);
+                        //  setTimeout( espera(datos,resultado.aseguradoras[datos].Tarifa),2000);
+                    }
+
+                } else {
+                    //console.log(resultado);
+                    //if(resultado.aseguradoras.length > 0){
+
+                    //    var tipo  = typeof(resultado.aseguradoras[contador]);
+                    //    console.log("tipo "+tipo);
+
+                    //    if( tipo != undefined ){
+                    //        console.log(resultado.aseguradoras[contador].tarifa);
+                    //        if( (resultado.aseguradoras[contador].tarifa)>0 ){
+                    //            console.log(resultado.aseguradoras[contador].tarifa);
+                    //            $("#contenedores").append("<div class= 'card-deck col-lg-1' style='width: 100px;'>" + "<img class='card-img-top' src=" +ArregloImagenes[contador]+ ">" + "<div class='card-body'>" + "<h5 class='card-title text-center'>" + resultado.aseguradoras[contador].tarifa + "</h5>" + "</div></div>");
+                    //            // espera(resultado.aseguradoras[contador].tarifa),2000);
+                    //            //settimeout( espera(resultado.aseguradoras[contador].tarifa),2000);
+                    //            contador++;
 
 
+                    //        }
+
+
+
+                    //        }
+
+                    //    }
+
+                    setTimeout(GetPeticion(UrlPeticion), 2000);
+                }
+
+            });
+        }
+
+        var espera = function (datos, tarifa) {
+
+            $("#contenedores").append("<div class= 'card-deck col-lg-1' style='width: 100px;'>" + "<img class='card-img-top' src=" + ArregloImagenes[datos] + ">" + "<div class='card-body'>" + "<h5 class='card-title text-center'>" + tarifa + "</h5>" + "</div></div>");
+            //settimeout(function (tarifa1) {
+            //              $("#contenedores").append("<div class= 'card-deck col-lg-1' style='width: 100px;'>" + "<img class='card-img-top' src=" +arregloimagenes[contador]+ ">" + "<div class='card-body'>" + "<h5 class='card-title text-center'>" + tarifa1 + "</h5>" + "</div></div>");
+
+            //          },2000);}
+        }
 
     });
 </script>
